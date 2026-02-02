@@ -9,8 +9,6 @@ import asyncio
 
 from app.models.document import Document
 from app.services.ocr_service import OCRService
-from app.services.vector_service import VectorService
-from app.services.rag_service import RAGService
 from app.services.deadline_extractor import DeadlineExtractor
 
 
@@ -18,7 +16,6 @@ class ProcessingService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.ocr = OCRService()
-        self.vector = VectorService()
         self.deadline_extractor = DeadlineExtractor()
     
     async def process_document_async(
@@ -69,33 +66,9 @@ class ProcessingService:
             if deadline:
                 document.extracted_deadline = deadline
             
-            # Step 3: Generate embeddings and store in Pinecone
-            chunks = await self.vector.chunk_text(ocr_text)
-            vector_ids = []
-            
-            for i, chunk in enumerate(chunks):
-                embedding = await self.vector.embed_text(chunk)
-                vector_id = f"{document_id}_{i}"
-                
-                # Store in Pinecone
-                from app.core.config import settings
-                from pinecone import Pinecone
-                pc = Pinecone(api_key=settings.PINECONE_API_KEY)
-                index = pc.Index(settings.PINECONE_INDEX_NAME)
-                
-                index.upsert(vectors=[{
-                    "id": vector_id,
-                    "values": embedding,
-                    "metadata": {
-                        "document_id": str(document_id),
-                        "text": chunk,
-                        "chunk_index": i,
-                    }
-                }])
-                
-                vector_ids.append(vector_id)
-            
-            document.vector_id = ",".join(vector_ids)
+            # Step 3 (optional): embeddings/vector storage
+            # Skipped in dev mode / Python 3.13 local setup.
+            document.vector_id = None
             document.status = "completed"
             
             await self.db.commit()

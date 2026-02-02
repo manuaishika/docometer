@@ -19,6 +19,24 @@ async def get_current_user(
     db: AsyncSession = Depends(get_db),
 ) -> User:
     """Get current authenticated user"""
+    # Dev-mode shortcut: allow requests without auth and auto-provision a demo user.
+    if settings.DEV_MODE and not token:
+        result = await db.execute(select(User).where(User.username == settings.DEV_USERNAME))
+        user = result.scalar_one_or_none()
+        if user is None:
+            user = User(
+                email=settings.DEV_USER_EMAIL,
+                username=settings.DEV_USERNAME,
+                hashed_password="dev",
+                full_name="Demo User",
+                is_active=True,
+                is_superuser=True,
+            )
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+        return user
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",

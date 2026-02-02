@@ -14,7 +14,7 @@ class DocumentCreate(BaseModel):
 
 
 class DocumentResponse(BaseModel):
-    id: UUID
+    id: str
     title: str
     file_name: str
     file_path: str
@@ -27,7 +27,7 @@ class DocumentResponse(BaseModel):
     status: str
     ocr_text: Optional[str] = None
     vector_id: Optional[str] = None
-    uploaded_by: UUID
+    uploaded_by: str
     created_at: datetime
     updated_at: datetime
     

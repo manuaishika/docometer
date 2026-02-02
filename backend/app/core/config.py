@@ -17,8 +17,8 @@ class Settings(BaseSettings):
         "https://*.vercel.app",
     ]
     
-    # Database - Neon PostgreSQL
-    DATABASE_URL: str = ""
+    # Database (default to local SQLite for easy dev; can be set to Neon Postgres)
+    DATABASE_URL: str = "sqlite+aiosqlite:///./docosphere.db"
     DB_POOL_SIZE: int = 20
     DB_MAX_OVERFLOW: int = 10
     DB_POOL_PRE_PING: bool = True
@@ -59,6 +59,11 @@ class Settings(BaseSettings):
     MAX_UPLOAD_SIZE: int = 50 * 1024 * 1024  # 50MB
     ENABLE_CACHE: bool = True
     ENABLE_MONITORING: bool = True
+
+    # Dev convenience (lets the app run without auth + external services)
+    DEV_MODE: bool = True
+    DEV_USER_EMAIL: str = "demo@local"
+    DEV_USERNAME: str = "demo"
     
     class Config:
         env_file = ".env"

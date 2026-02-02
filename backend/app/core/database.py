@@ -1,5 +1,7 @@
 """
-Database Configuration - Optimized Connection Pooling
+Database Configuration - Async SQLAlchemy
+
+Defaults to SQLite for easy local dev; supports Postgres in production.
 """
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import declarative_base
@@ -8,16 +10,33 @@ from contextlib import asynccontextmanager
 
 from app.core.config import settings
 
-# Create async engine with connection pooling
-engine = create_async_engine(
-    settings.DATABASE_URL,
-    pool_size=settings.DB_POOL_SIZE,
-    max_overflow=settings.DB_MAX_OVERFLOW,
-    pool_pre_ping=settings.DB_POOL_PRE_PING,
-    pool_recycle=3600,  # Recycle connections after 1 hour
-    echo=False,  # Set to True for SQL debugging
-    future=True,
-)
+
+def _create_engine():
+    url = settings.DATABASE_URL or ""
+    is_sqlite = url.startswith("sqlite")
+
+    # SQLite doesn't support the same pooling args; use NullPool for simplicity.
+    if is_sqlite:
+        return create_async_engine(
+            url,
+            poolclass=NullPool,
+            echo=False,
+            future=True,
+        )
+
+    # Postgres / other DBs
+    return create_async_engine(
+        url,
+        pool_size=settings.DB_POOL_SIZE,
+        max_overflow=settings.DB_MAX_OVERFLOW,
+        pool_pre_ping=settings.DB_POOL_PRE_PING,
+        pool_recycle=3600,
+        echo=False,
+        future=True,
+    )
+
+
+engine = _create_engine()
 
 # Create async session factory
 AsyncSessionLocal = async_sessionmaker(

@@ -16,12 +16,17 @@ async def init_cache():
     """Initialize Redis connection"""
     global redis_client
     if settings.ENABLE_CACHE:
-        redis_client = await redis.from_url(
-            settings.REDIS_URL,
-            encoding="utf-8",
-            decode_responses=True,
-            max_connections=50,
-        )
+        try:
+            redis_client = await redis.from_url(
+                settings.REDIS_URL,
+                encoding="utf-8",
+                decode_responses=True,
+                max_connections=50,
+            )
+            # Validate connectivity; if Redis isn't running, disable cache gracefully.
+            await redis_client.ping()
+        except Exception:
+            redis_client = None
 
 
 async def get_cache() -> Optional[redis.Redis]:
