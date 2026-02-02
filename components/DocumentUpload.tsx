@@ -18,9 +18,8 @@ export function DocumentUpload({ open, onClose, onSuccess }: DocumentUploadProps
     mutationFn: async (file: File) => {
       const formData = new FormData()
       formData.append('file', file)
-      const { data } = await api.post('/documents/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      // Let the browser set the multipart boundary automatically.
+      const { data } = await api.post('/documents/upload', formData)
       return data
     },
     onSuccess: () => {

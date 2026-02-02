@@ -1,9 +1,11 @@
 import axios from 'axios'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+// Use same-origin Next.js API routes by default so the UI works even without the FastAPI backend.
+// If you want to hit a real backend, implement proxying in the Next route handlers.
+const API_BASE = '/api/v1'
 
 export const api = axios.create({
-  baseURL: `${API_URL}/api/v1`,
+  baseURL: API_BASE,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -12,9 +14,11 @@ export const api = axios.create({
 
 // Request interceptor for auth token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('access_token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
   }
   return config
 })
@@ -23,7 +27,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (typeof window !== 'undefined' && error.response?.status === 401) {
       localStorage.removeItem('access_token')
       window.location.href = '/login'
     }
