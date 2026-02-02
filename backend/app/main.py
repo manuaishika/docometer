@@ -21,6 +21,7 @@ async def lifespan(app: FastAPI):
     # Startup
     await init_db()
     await init_cache()
+    setup_monitoring(app)
     yield
     # Shutdown
     pass

@@ -7,6 +7,7 @@ from uuid import UUID
 import aiofiles
 import os
 from pathlib import Path
+import asyncio
 
 from app.models.document import Document
 from app.services.supabase_service import SupabaseService
@@ -43,8 +44,10 @@ class DocumentService:
         await self.db.commit()
         await self.db.refresh(document)
         
-        # Trigger async processing
-        await self.processing.process_document_async(document.id, user_id)
+        # Trigger async processing (fire and forget)
+        asyncio.create_task(
+            self.processing.process_document_async(document.id, user_id)
+        )
         
         return document
     

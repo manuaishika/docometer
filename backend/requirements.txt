@@ -20,3 +20,4 @@ pdf2image==1.16.3
 supabase==2.3.0
 celery==5.3.4
 prometheus-fastapi-instrumentator==6.1.0
+python-dateutil==2.8.2

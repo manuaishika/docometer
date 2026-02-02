@@ -2,7 +2,8 @@
 Q&A Schemas
 """
 from pydantic import BaseModel
-from uuid import UUID, Optional
+from uuid import UUID
+from typing import Optional
 
 
 class QuestionRequest(BaseModel):

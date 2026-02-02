@@ -35,10 +35,11 @@ class ProcessingService:
                 user_id
             )
         else:
-            # Run in background
-            asyncio.create_task(
+            # Run in background - use asyncio.create_task for fire-and-forget
+            task = asyncio.create_task(
                 self._process_document(document_id, user_id)
             )
+            # Don't await, let it run in background
     
     async def _process_document(self, document_id: UUID, user_id: UUID):
         """Internal processing function"""

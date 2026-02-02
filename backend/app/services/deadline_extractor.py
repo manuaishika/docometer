@@ -3,8 +3,13 @@ Deadline Extractor - Extract deadlines from text
 """
 import re
 from datetime import datetime, timedelta
-from dateutil import parser
 import asyncio
+
+try:
+    from dateutil import parser
+    HAS_DATEUTIL = True
+except ImportError:
+    HAS_DATEUTIL = False
 
 
 class DeadlineExtractor:
@@ -29,7 +34,12 @@ class DeadlineExtractor:
                 date_str = match.group(1) if match.groups() else match.group(0)
                 try:
                     # Parse date
-                    date = await asyncio.to_thread(parser.parse, date_str, fuzzy=True)
+                    if HAS_DATEUTIL:
+                        date = await asyncio.to_thread(parser.parse, date_str, fuzzy=True)
+                    else:
+                        # Fallback to simple parsing
+                        from datetime import datetime
+                        date = datetime.strptime(date_str, "%d/%m/%Y")
                     # Only return future dates
                     if date > datetime.now():
                         return date
