@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { api } from '@/lib/api'
+import { ThemeToggle } from '@/components/ThemeToggle'
+import { Sparkles } from 'lucide-react'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -35,37 +37,45 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h1 className="text-3xl font-bold mb-6 text-center">DocuSphere</h1>
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black text-black dark:text-white transition-colors p-4">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      <div className="bg-white dark:bg-black p-8 rounded-xl shadow-lg max-w-md w-full border border-gray-200 dark:border-gray-800">
+        <div className="flex items-center justify-center space-x-2 mb-6">
+          <Sparkles className="h-8 w-8 text-black dark:text-white" />
+          <h1 className="text-3xl font-bold text-black dark:text-white">DocuFlow</h1>
+        </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="bg-red-100 text-red-700 p-3 rounded">{error}</div>
+            <div className="bg-gray-100 dark:bg-gray-900 text-black dark:text-white p-3 rounded-lg border border-gray-300 dark:border-gray-700">
+              {error}
+            </div>
           )}
           <div>
-            <label className="block text-sm font-medium mb-1">Username</label>
+            <label className="block text-sm font-medium mb-1 text-black dark:text-white">Username</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-black text-black dark:text-white rounded-lg focus:outline-none focus:border-black dark:focus:border-white transition-colors"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
+            <label className="block text-sm font-medium mb-1 text-black dark:text-white">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-black text-black dark:text-white rounded-lg focus:outline-none focus:border-black dark:focus:border-white transition-colors"
               required
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
+            className="w-full px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-medium"
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>

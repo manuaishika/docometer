@@ -29,7 +29,7 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app with optimizations
 app = FastAPI(
-    title="DocuSphere API",
+    title="DocuFlow API",
     description="AI Document Intelligence Hub - Optimized for Performance",
     version="1.0.0",
     docs_url="/api/docs",

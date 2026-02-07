@@ -8,7 +8,7 @@ from typing import List
 class Settings(BaseSettings):
     # API Settings
     API_V1_STR: str = "/api/v1"
-    PROJECT_NAME: str = "DocuSphere"
+    PROJECT_NAME: str = "DocuFlow"
     
     # CORS
     CORS_ORIGINS: List[str] = [
