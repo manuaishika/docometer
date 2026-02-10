@@ -2,12 +2,15 @@
   "name": "docosphere-frontend",
   "version": "1.0.0",
   "private": true,
+
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint"
-  },
+    "lint": "next lint",
+    "prisma:generate": "prisma generate"
+  }
+  }
   "dependencies": {
     "next": "14.2.35",
     "react": "^18.2.0",
